@@ -14,12 +14,14 @@ http
     });
   })
   .listen(7777);
-
+console.log("Listening on 7777");
 handler.on("error", function(err) {
   console.error("Error:", err.message);
 });
 
 handler.on("push", async function(event) {
+  console.log("Received push event for " + event.payload.repository.name);
+
   const app = await fetch(
     `https://github.penalosa.dev/get/token/${event.payload.repository.owner.login}/${event.payload.repository.name}`,
     {
