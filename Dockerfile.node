@@ -1,6 +1,6 @@
 FROM node:10
-run curl -fsSL https://get.docker.com -o get-docker.sh
-run get-docker.sh
+run /bin/bash -c "curl -fsSL https://get.docker.com | /bin/sh"
+
 # Create app directory
 WORKDIR /usr/src/app
 
