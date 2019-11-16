@@ -1,7 +1,9 @@
-from node:latest
-
-run curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-run unzip awscliv2.zip
-run ./aws/install
+from node:10
+WORKDIR /usr/bin
+run npm i node-fetch
+run npm i aws-sdk
+run npm i md5-file
+run npm i mime-types
+COPY route.js /usr/bin/route.js
 
 WORKDIR /usr/src/deploy

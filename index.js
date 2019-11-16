@@ -3,9 +3,9 @@ const createHandler = require("github-webhook-handler");
 const config = require("./config.js");
 const fetch = require("node-fetch");
 const { spawn } = require("child_process");
-
+const fs = require("fs");
 const handler = createHandler({ path: "/webhook", secret: config.secret });
-
+const shortid = require("shortid");
 http
   .createServer(function(req, res) {
     handler(req, res, function(err) {
@@ -32,9 +32,20 @@ handler.on("push", async function(event) {
   const buildCommand =
     app.app.buildCommand != ""
       ? ` && npm install && ${app.app.buildCommand} && `
-      : "";
+      : " && ";
+
   const build = spawn(
-    `docker build -t build-env . && docker run build-env /bin/bash -c "git clone https://${app.user}:${app.token}@github.com/${app.app.org}/${app.app.name} . ${buildCommand} AWS_ACCESS_KEY_ID=${config.access_key} AWS_SECRET_ACCESS_KEY=${config.secret_key} aws2 s3 sync ./${publish} s3://prospectus/sites/${app.app.id} --endpoint=https://nyc3.digitaloceanspaces.com"`,
+    `docker build -t build-env . && docker run build-env /bin/bash -c "git clone https://${
+      app.user
+    }:${app.token}@github.com/${app.app.org}/${
+      app.app.name
+    } . && rm -rf .git ${buildCommand} cp -r . ../site && cd .. && CF_TOKEN="${
+      config.cf_zone_id
+    }::${config.cf_account_id}::${config.cf_api_key}::${
+      config.cf_email
+    }::${app.app.name.toLowerCase()}-${app.app.org.toLowerCase()}::penalosa.dev::${publish}::${
+      config.access_key
+    }::${config.secret_key}" node /usr/bin/route.js"`,
     { shell: true }
   );
 
