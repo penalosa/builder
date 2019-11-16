@@ -85,7 +85,7 @@ const cloudflare = (api_key, auth_email) => {
         await request.post(`zones/${zone_id}/dns_records`, {
           type: "A",
           name: domain,
-          content: "93.184.216.34",
+          content: "159.65.85.161",
           proxied: true
         })
     })
